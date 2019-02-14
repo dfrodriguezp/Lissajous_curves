@@ -1,25 +1,23 @@
 class Oscillator {
-    constructor(x, y, radius, velocity, angle) {
+    constructor(x, y, diameter, angle) {
         this.pos = createVector(x, y);
-        this.r = radius;
-        this.w = velocity;
+        this.d = diameter;
         this.phi = angle;
-        this.x = this.pos.x + this.r * cos(this.phi);
-        this.y = this.pos.y + this.r * sin(this.phi);
+        this.x = this.pos.x + (this.d / 2) * cos(this.phi);
+        this.y = this.pos.y + (this.d / 2) * sin(this.phi);
     }
 
-    update() {
-        this.phi += this.w;
-        this.x = this.pos.x + this.r * cos(this.phi);
-        this.y = this.pos.y + this.r * sin(this.phi);
+    update(angle) {
+        this.phi = angle;
+        this.x = this.pos.x + (this.d / 2) * cos(this.phi);
+        this.y = this.pos.y + (this.d / 2) * sin(this.phi);
     }
 
     show() {
-        strokeWeight(1);
-        stroke(255);
+        strokeWeight(2);
         noFill();
-        ellipse(this.pos.x, this.pos.y, 2*this.r);
+        ellipse(this.pos.x, this.pos.y, this.d);
         strokeWeight(8);
-        point(this.x, this.y)
+        point(this.x, this.y);
     }
 }

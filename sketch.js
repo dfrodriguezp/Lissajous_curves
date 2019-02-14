@@ -1,41 +1,80 @@
-let osc1;
-let osc2;
-let figure;
-let angle;
-let m = 1;
-let n = 4;
+let angle = 0;
+let cols = 5;
+let rows = 5;
+let oscX = [];
+let oscY = [];
+let figures = [];
+let d;
+let colors = [];
 
 function setup() {
     createCanvas(600, 600);
-    angle = PI;
-    osc1 = new Oscillator(150, 400, 100, -0.01*n, angle);
-    osc2 = new Oscillator(400, 150, 100, -0.01*m,  angle);
-    figure = new Figure();
+    d = width / (cols + 1);
+
+    for (let i = 0; i < cols; i++) {
+        oscX.push(new Oscillator(d + i * d + d/2, d / 2, d*0.8, angle));
+        let r = random(256);
+        let g = random(256);
+        let b = random(256);
+        colors.push(color(r, g, b));
+    }
+
+    for (let j = 0; j < rows; j++) {
+        oscY.push(new Oscillator(d / 2, d + j * d + d/2, d*0.8, angle));
+    }
+
+    for (let i = 0; i < cols; i++) {
+        for (let j = 0; j < rows; j++) {
+            figures.push(new Figure());
+        }
+    }
 }
 
 
 function draw() {
-    background(0);
-    osc1.show();
-    osc2.show();
-    osc1.update();
-    osc2.update();
-    figure.setX(osc2.x);
-    figure.setY(osc1.y);
-    figure.addPoint();
-    figure.show();
+    background(41);
 
-    if (osc1.phi <= -n*(TWO_PI - angle) && osc2.phi <= -m*(TWO_PI - angle)) {
-        osc1.phi = angle;
-        osc2.phi = angle;
-        figure.path = [];
+    for (let i = 0; i < cols; i++) {
+        o = oscX[i];
+        stroke(colors[i]);
+        o.show();
+        o.update(angle * (i + 1));
+        strokeWeight(1);
+        stroke(colors[i], 100);
+        line(o.x, o.y, o.x, oscY[oscY.length-1].y);
+        for (let j = 0; j < rows; j++) {
+            figures[index(i, j)].setX(o.x);
+        }
     }
 
-    strokeWeight(1);
-    stroke(255, 100);
-    line(osc1.x, osc1.y, osc2.x, osc1.y);
-    line(osc2.x, osc1.y, osc2.x, osc2.y);
-    strokeWeight(5);
-    stroke(255, 200);
-    point(osc2.x, osc1.y);
+    for (let j = 0; j < rows; j++) {
+        o = oscY[j];
+        stroke(colors[j]);
+        o.show();
+        o.update(-angle * (j + 1));
+        strokeWeight(1);
+        stroke(colors[j], 100);
+        line(o.x, o.y, oscX[oscX.length-1].x, o.y);
+        for (let i = 0; i < rows; i++) {
+            figures[index(i, j)].setY(o.y);
+        }
+    }
+
+    angle -= 0.015;
+    for (let f of figures) {
+        f.addPoint();
+        f.show();
+    }
+
+    if (angle <= -TWO_PI) {
+        for (let f of figures) {
+            f.path = [];
+        }
+        angle = 0;
+    }
+    // noLoop();
+}
+
+function index(i, j) {
+    return (i + j * rows);
 }

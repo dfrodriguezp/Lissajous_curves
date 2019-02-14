@@ -14,15 +14,19 @@ class Figure {
 
     addPoint() {
         this.path.push(this.current);
-        this.current = createVector();
     }
 
     show() {
-        strokeWeight(1);
+        strokeWeight(2);
+        stroke(255);
         beginShape();
         for (let p of this.path) {
             vertex(p.x, p.y);
         }
         endShape();
+        strokeWeight(5);
+        stroke(255, 200);
+        point(this.current.x, this.current.y);
+        this.current = createVector();
     }
 }
